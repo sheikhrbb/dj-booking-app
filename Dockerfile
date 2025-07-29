@@ -20,6 +20,3 @@ RUN chown -R www-data:www-data /var/www/html \
 
 # Update Apache config to use Laravel public folder as root
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
-
-chown -R www-data:www-data .
-
