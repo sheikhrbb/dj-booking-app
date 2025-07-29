@@ -11,9 +11,8 @@ use App\Http\Controllers\Admin\AboutSectionController;
 //     return view('welcome');
 // });
 Route::get('/', function () {
-    return 'Laravel is working!';
+    return redirect('/dashboard');
 });
-
 
 
 
