@@ -74,7 +74,40 @@
 
 
                     <td>{{ $booking->notes }}</td>
-                    <td>{{ $booking->customer_phone }}</td>
+                    <td>
+                        @php
+                            // Parse phone numbers - handle multiple formats
+                            $phones = [];
+                            if (!empty($booking->customer_phone)) {
+                                // Split by common delimiters
+                                $phoneArray = preg_split('/[,;\s]+/', trim($booking->customer_phone));
+                                foreach ($phoneArray as $phone) {
+                                    $phone = trim($phone);
+                                    if (!empty($phone)) {
+                                        // Clean phone number (remove spaces, dashes, etc.)
+                                        $cleanPhone = preg_replace('/[^0-9+]/', '', $phone);
+                                        if (!empty($cleanPhone)) {
+                                            $phones[] = $cleanPhone;
+                                        }
+                                    }
+                                }
+                            }
+                        @endphp
+                        
+                        @if(!empty($phones))
+                            @foreach($phones as $phone)
+                                <a href="https://wa.me/{{ $phone }}" 
+                                   target="_blank" 
+                                   class="btn btn-sm btn-success mr-1 mb-1" 
+                                   title="Send WhatsApp to {{ $phone }}"
+                                   style="border-radius: 50%; width: 35px; height: 35px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
+                                    <i class="fab fa-whatsapp" style="font-size: 16px;"></i>
+                                </a>
+                            @endforeach
+                        @else
+                            <span class="text-muted">No Phone</span>
+                        @endif
+                    </td>
                     <td>{{ $booking->customer_email }}</td>
                     <td>
                         @if($booking->service && $booking->service->media && count($booking->service->media))

@@ -20,6 +20,8 @@ COPY . /var/www/html
 # Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
+RUN php artisan migrate --force
+
 # Generate app key
 RUN cp .env.example .env && php artisan key:generate
 
