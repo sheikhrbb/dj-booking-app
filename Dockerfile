@@ -20,7 +20,7 @@ COPY . /var/www/html
 # Copy .env file first (you must have this in your project root)
 RUN cp .env.example .env
 
-COPY .env /var/www/html/.env
+
 
 
 # Install dependencies
