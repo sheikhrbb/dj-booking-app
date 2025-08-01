@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    $carouselType = 'edit-service';
+@endphp
+
+@include('components.dynamic-carousel')
+
 <div class="container py-5">
     <div class="section-title position-relative text-center mb-5">
         <h6 class="text-uppercase text-primary mb-3" style="letter-spacing: 3px;">Service Management</h6>
@@ -43,24 +49,21 @@
                 <div class="form-group">
                     <label for="media" class="font-weight-bold">Image/Video (max 5):</label><br>
                     @foreach($service->media as $media)
-                        @php
-                            $ext = pathinfo($media->file, PATHINFO_EXTENSION);
-                            $isVideo = in_array(strtolower($ext), ['mp4','avi','mov','wmv','flv','webm','mkv']);
-                        @endphp
                         <div class="media-preview" style="display:inline-block; margin:5px; text-align:center; position:relative;">
                             <button type="button" class="remove-media-btn" data-media-id="{{ $media->id }}" style="position:absolute;top:0;right:0;background:red;color:white;border:none;border-radius:50%;width:24px;height:24px;z-index:2;">&times;</button>
-                            @if($isVideo)
-                                <a href="{{ asset('storage/' . $media->file) }}" target="_blank">
-                                    <video src="{{ asset('storage/' . $media->file) }}" style="max-width:100px;max-height:100px;" controls></video>
+                            @if($media->is_video)
+                                <a href="{{ $media->file_url }}" target="_blank">
+                                    <video src="{{ $media->file_url }}" style="max-width:100px;max-height:100px;" controls></video>
                                 </a>
                             @else
-                                <a href="{{ asset('storage/' . $media->file) }}" target="_blank">
-                                    <img src="{{ asset('storage/' . $media->file) }}" class="img-thumbnail" style="max-width:100px;max-height:100px;">
+                                <a href="{{ $media->file_url }}" target="_blank">
+                                    <img src="{{ $media->file_url }}" class="img-thumbnail" style="max-width:100px;max-height:100px;">
                                 </a>
                             @endif
                         </div>
                     @endforeach
                     <input type="file" name="media[]" id="media" class="form-control-file" accept="image/*,video/*" multiple>
+                    <small class="form-text text-muted">Supported formats: Images (jpg, png, gif) and Videos (mp4, avi, mov, wmv, flv, webm, mkv)</small>
                 </div>
                 <div class="text-center">
                     <!-- <button type="submit" class="btn btn-primary font-weight-bold px-5 py-2">Update Service</button> -->

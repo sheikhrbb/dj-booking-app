@@ -2,6 +2,12 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    $carouselType = 'services';
+@endphp
+
+@include('components.dynamic-carousel')
+
 <div class="container py-5">
     <div class="section-title position-relative text-center mb-5">
         <h6 class="text-uppercase text-primary mb-3" style="letter-spacing: 3px;">Our Services</h6>
@@ -32,74 +38,103 @@
         <noscript><button type="submit" class="btn btn-primary ml-2">Filter</button></noscript>
     </form>
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover bg-white">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Title</th>
-                    <th>Description</th>
-                    <th>Image/Video</th>
-                    <th style="width: 180px;">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($services as $service)
-                <tr>
-                    <td class="align-middle font-weight-bold">{{ $service->title }}</td>
-                    <td class="align-middle">{{ $service->description }}</td>
-                    <td class="align-middle">
-                        @foreach($service->media ?? [] as $media)
-                            @php
-                                $ext = pathinfo($media->file, PATHINFO_EXTENSION);
-                                $isVideo = in_array(strtolower($ext), ['mp4','avi','mov','wmv','flv','webm','mkv']);
-                            @endphp
-                            <div style="display:inline-block; margin:5px; text-align:center;">
-                                @if($isVideo)
-                                    <!-- <video src="{{ asset('storage/' . $media->file) }}" style="max-width:100px;max-height:100px; display:block;" controls></video> -->
-                                    <a href="{{ asset('storage/' . $media->file) }}" target="_blank" class="btn btn-sm btn-outline-primary mt-1" title="View Video">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
-                                @else
-                                    <!-- <img src="{{ asset('storage/' . $media->file) }}" class="img-thumbnail" style="max-width:100px;max-height:100px; display:block;"> -->
-                                    <a href="{{ asset('storage/' . $media->file) }}" target="_blank" class="btn btn-sm btn-outline-primary mt-1" title="View Image">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
-                                @endif
-                            </div>
-                        @endforeach
-                    </td>
-                    <td class="align-middle text-center">
-                        @auth
-                            @if(auth()->user()->is_admin)
-                                <!-- Admin: Show Edit, Delete -->
-                                <a href="{{ route('services.edit', $service->id) }}" class="btn btn-sm btn-outline-primary mr-2">Edit</a>
-                                <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this service?')">Delete</button>
-                                </form>
+    <div class="row">
+        @forelse($services as $service)
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm border-0 service-card">
+                    <div class="card-img-top position-relative" style="height:220px; background:#f8f9fa; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                        @php $firstMedia = $service->media->first(); @endphp
+                        @if($firstMedia)
+                            @if($firstMedia->is_video)
+                                <div style="position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+                                    <video src="{{ $firstMedia->file_url }}" style="max-width:100%; max-height:100%; border-radius:8px;" poster="{{ $service->media->where('is_video', false)->first()->file_url ?? '' }}" muted></video>
+                                    <button class="btn btn-light btn-play position-absolute" style="top:50%; left:50%; transform:translate(-50%,-50%); border-radius:50%; padding:0.5rem 0.7rem; font-size:2rem;" onclick="playVideo('{{ $firstMedia->file_url }}')"><span></span></button>                                   
+                                </div>
                             @else
-                                <!-- Logged-in but not admin: Show only Book Now -->
-                                <a href="{{ route('bookings.create', $service) }}" class="btn btn-sm btn-success">Book Now</a>
+                                <img src="{{ $firstMedia->file_url }}" alt="Service Image" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">
                             @endif
-                        @endauth
+                        @else
+                            <div class="text-muted">No Media</div>
+                        @endif
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title font-secondary mb-2">{{ $service->title }}</h5>
 
-                        <!-- Show Book Now for guests (not logged in) -->
-                        @guest
-                            <a href="{{ route('bookings.create', $service) }}" class="btn btn-sm btn-success">Book Now</a>
-                        @endguest
-                    </td>
+                        <p class="card-text text-muted mb-2" style="min-height: 48px;">{{ $service->description }}</p>
 
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="4" class="text-center text-muted">No services available.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+                        @if($service->media->count() > 1)
+                            <div class="card-footer bg-white border-0 pt-2 px-0">
+                                <div class="d-flex flex-wrap">
+                                    @foreach($service->media->slice(1) as $media)
+                                        @if($media->is_video)                                            
+                                            <a href="javascript:void(0);" onclick="playVideo('{{ $media->file_url }}')" class="btn btn-sm btn-outline-primary mr-2 mb-2" title="Play Video">
+                                                <i class="fa fa-video text-primary mr-1"></i> Video
+                                            </a>
+                                        @else
+                                            <a href="{{ $media->file_url }}" target="_blank" class="btn btn-sm btn-outline-primary mr-2 mb-2" title="View Image">
+                                                <i class="fa fa-image text-primary mr-1"></i> Image
+                                            </a>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Action Buttons -->
+                        <div class="mt-auto d-flex flex-wrap justify-content-between align-items-center">
+                            @auth
+                                @if(auth()->user()->is_admin)
+                                    <a href="{{ route('services.edit', $service->id) }}" class="btn btn-sm btn-outline-primary mr-2 mb-1">Edit</a>
+                                    <form action="{{ route('services.destroy', $service->id) }}" method="POST" class="mb-1" onsubmit="return confirm('Delete this service?')" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </form>
+                                @else
+                                    <a href="{{ route('bookings.create', $service) }}" class="btn btn-sm btn-success mb-1">Book Now</a>
+                                @endif
+                            @endauth
+
+                            @guest
+                                <a href="{{ route('bookings.create', $service) }}" class="btn btn-sm btn-success mb-1">Book Now</a>
+                            @endguest
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="col-12 text-center text-muted">No services available.</div>
+        @endforelse
     </div>
 </div>
+
+<!-- Video Modal for Card Grid -->
+<div class="modal fade" id="video_img_Modal" tabindex="-1" role="dialog" aria-labelledby="videoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <button type="button" class="close m-2" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <div class="embed-responsive embed-responsive-16by9">
+                    <iframe class="embed-responsive-item" src="" id="video_card" allowscriptaccess="always" allow="autoplay"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    function playVideo(videoUrl) {
+        $('#video_img_Modal').modal('show');
+        $('#video_card').attr('src', videoUrl + "?autoplay=1&modestbranding=1&showinfo=0");
+    }
+    $('#video_img_Modal').on('hide.bs.modal', function() {
+        $("#video_card").attr('src', '');
+    });
+</script>
 @endsection
 
 

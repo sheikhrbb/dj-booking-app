@@ -5,6 +5,7 @@ use App\Http\Controllers\ServiceController;
 use App\Models\AboutSection;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Admin\AboutSectionController;
+use App\Http\Controllers\ChatbotController;
 
 
 // Route::get('/', function () {
@@ -58,5 +59,19 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('about-sections/{section}/edit', [AboutSectionController::class, 'edit'])->name('about-sections.edit');
     Route::post('about-sections/{section}', [AboutSectionController::class, 'update'])->name('about-sections.update');
 });
+
+// Chatbot routes
+Route::prefix('chatbot')->group(function () {
+    Route::post('/message', [ChatbotController::class, 'processMessage'])->name('chatbot.message');
+    Route::get('/history', [ChatbotController::class, 'getConversationHistory'])->name('chatbot.history');
+    Route::get('/session', [ChatbotController::class, 'generateSessionId'])->name('chatbot.session');
+    Route::get('/services', [ChatbotController::class, 'getServices'])->name('chatbot.services');
+    Route::get('/availability', [ChatbotController::class, 'checkAvailability'])->name('chatbot.availability');
+});
+
+// Chatbot page
+Route::get('/chat', function () {
+    return view('chatbot.index');
+})->name('chatbot.index');
 
 

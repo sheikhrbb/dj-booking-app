@@ -34,7 +34,7 @@
         </form>
 
 
-         <!-- end -->
+        <!-- end -->
         <table class="table table-bordered table-hover bg-white rounded">
             <thead class="thead-dark">
                 <tr>
@@ -76,38 +76,48 @@
                     <td>{{ $booking->notes }}</td>
                     <td>
                         @php
-                            // Parse phone numbers - handle multiple formats
-                            $phones = [];
-                            if (!empty($booking->customer_phone)) {
-                                // Split by common delimiters
-                                $phoneArray = preg_split('/[,;\s]+/', trim($booking->customer_phone));
-                                foreach ($phoneArray as $phone) {
-                                    $phone = trim($phone);
-                                    if (!empty($phone)) {
-                                        // Clean phone number (remove spaces, dashes, etc.)
-                                        $cleanPhone = preg_replace('/[^0-9+]/', '', $phone);
-                                        if (!empty($cleanPhone)) {
-                                            $phones[] = $cleanPhone;
-                                        }
-                                    }
-                                }
+                        // Parse phone numbers - handle multiple formats
+                        $phones = [];
+                        if (!empty($booking->customer_phone)) {
+                        // Split by common delimiters
+                        $phoneArray = preg_split('/[,;\s]+/', trim($booking->customer_phone));
+                        foreach ($phoneArray as $phone) {
+                        $phone = trim($phone);
+                        if (!empty($phone)) {
+                        // Remove all non-digit characters
+                        $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
+
+                        // If it's a 10-digit number (likely local), prefix with country code (e.g., India: +91)
+                        if (strlen($cleanPhone) === 10) {
+                        $cleanPhone = '91' . $cleanPhone;
+                        }
+
+                        // Optional: Only include if length is valid (e.g., 11–15 digits typical for international numbers)
+                        if (strlen($cleanPhone) >= 11 && strlen($cleanPhone) <= 15) {
+                            $phones[]=$cleanPhone;
                             }
-                        @endphp
-                        
-                        @if(!empty($phones))
+                            }
+                            }
+                            }
+                            $defaultMessage = urlencode("Hi! Thanks for contacting us. We’re ready to make your event a success.");
+                            @endphp
+
+                            @if(!empty($phones))
                             @foreach($phones as $phone)
-                                <a href="https://wa.me/{{ $phone }}" 
-                                   target="_blank" 
-                                   class="btn btn-sm btn-success mr-1 mb-1" 
-                                   title="Send WhatsApp to {{ $phone }}"
-                                   style="border-radius: 50%; width: 35px; height: 35px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
-                                    <i class="fab fa-whatsapp" style="font-size: 16px;"></i>
-                                </a>
+                            <a href="https://wa.me/{{ $phone }}?text={{ $defaultMessage }}"
+                            target="_blank"
+                            class="btn btn-sm btn-success mr-1 mb-1"
+                            title="Send WhatsApp to {{ $phone }}"
+                            style="border-radius: 50%; width: 35px; height: 35px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
+                            <i class="fab fa-whatsapp" style="font-size: 16px;"></i>
+                            </a>
                             @endforeach
-                        @else
-                            <span class="text-muted">No Phone</span>
-                        @endif
+                            @else
+                            <span class="text-muted">NA</span>
+                            @endif
                     </td>
+
+
                     <td>{{ $booking->customer_email }}</td>
                     <td>
                         @if($booking->service && $booking->service->media && count($booking->service->media))
@@ -194,8 +204,8 @@
         }
 
         searchInput.addEventListener('input', toggleClearBtn);
-        
-        clearBtn.addEventListener('click', function () {
+
+        clearBtn.addEventListener('click', function() {
             searchInput.value = '';
             toggleClearBtn();
             document.getElementById('searchForm').submit(); // optional: auto-submit on clear
@@ -203,6 +213,6 @@
 
         // Initial check
         toggleClearBtn();
-        
+
     });
 </script>

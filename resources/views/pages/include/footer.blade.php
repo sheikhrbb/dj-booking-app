@@ -16,7 +16,7 @@
             <div class="d-flex justify-content-center py-2">
                 <p class="text-white mb-0" href="mailto:info@mustak-events.com">info@mustak-events.com</p>
                 <span class="px-3">|</span>
-                <p class="text-white mb-0" href="tel:+919876543210">+91 90269 14296</p>
+                <p class="text-white mb-0" href="tel:+91 90269 14296">+91 90269 14296</p>
             </div>
             <p class="m-0">&copy; <a class="text-primary" href="#">Mustak & Events</a>. All rights reserved.</p>
         </div>
@@ -41,107 +41,6 @@
 
     <script>
         $(function() {
-            // Login form validation 
-            // $('form[action="{{ route('login') }}"]').validate({
-            //     rules: {
-            //         email: {
-            //             required: true,
-            //             email: true
-            //         },
-            //         password: {
-            //             required: true,
-            //             minlength: 6
-            //         }
-            //     },
-            //     messages: {
-            //         email: {
-            //             required: "Please enter your email address",
-            //             email: "Please enter a valid email address"
-            //         },
-            //         password: {
-            //             required: "Please enter your password",
-            //             minlength: "Password must be at least 6 characters"
-            //         }
-            //     },
-            //     errorClass: "text-danger",
-            //     errorElement: "div",
-            //     highlight: function(element) {
-            //         $(element).addClass("is-invalid");
-            //     },
-            //     unhighlight: function(element) {
-            //         $(element).removeClass("is-invalid");
-            //     },
-            //     submitHandler: function(form) {
-            //         const $btn = $(form).find('button[type="submit"]');
-            //         $btn.attr('disabled', true);
-            //         const loadingText = $btn.data('loading') || 'Submitting...';
-            //         $btn.find('.submit-text').text(loadingText);
-            //         $btn.find('.spinner-border').removeClass('d-none');
-            //         form.submit(); // submit the form
-            //     }
-            // });
-
-            // Booking form validation
-            // $('.booking-form').validate({
-            //     rules: {
-            //         booking_date: {
-            //             required: true,
-            //             date: true
-            //         },
-            //         booking_time: {
-            //             required: true
-            //         },
-            //         customer_name: {
-            //             required: true,
-            //             minlength: 2
-            //         },
-            //         customer_email: {
-            //             required: true,
-            //             email: true
-            //         },
-            //         customer_phone: {
-            //             required: true,
-            //             minlength: 7
-            //         }
-            //     },
-            //     messages: {
-            //         booking_date: {
-            //             required: "Please select a booking date",
-            //             date: "Please enter a valid date"
-            //         },
-            //         booking_time: {
-            //             required: "Please select a booking time"
-            //         },
-            //         customer_name: {
-            //             required: "Please enter your name",
-            //             minlength: "Name must be at least 2 characters"
-            //         },
-            //         customer_email: {
-            //             required: "Please enter your email address",
-            //             email: "Please enter a valid email address"
-            //         },
-            //         customer_phone: {
-            //             required: "Please enter your phone number",
-            //             minlength: "Phone number must be at least 7 digits"
-            //         }
-            //     },
-            //     errorClass: "text-danger",
-            //     errorElement: "div",
-            //     highlight: function(element) {
-            //         $(element).addClass("is-invalid");
-            //     },
-            //     unhighlight: function(element) {
-            //         $(element).removeClass("is-invalid");
-            //     },
-            //     submitHandler: function(form) {
-            //         const $btn = $(form).find('button[type="submit"]');
-            //         $btn.attr('disabled', true);
-            //         const loadingText = $btn.data('loading') || 'Submitting...';
-            //         $btn.find('.submit-text').text(loadingText);
-            //         $btn.find('.spinner-border').removeClass('d-none');
-            //         form.submit(); // submit the form
-            //     }
-            // });
 
             function showToast(message) {
                 var $toast = $('#file-size-toast');

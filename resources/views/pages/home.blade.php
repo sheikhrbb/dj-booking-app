@@ -322,8 +322,7 @@
 
     @include('pages.include.footer')
 
-
-
+    @include('components.chatbot-widget')
 
 </body>
 

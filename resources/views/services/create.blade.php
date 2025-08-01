@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    $carouselType = 'create-service';
+@endphp
+
+@include('components.dynamic-carousel')
+
 <div class="container py-5">
     <div class="section-title position-relative text-center mb-5">
         <h6 class="text-uppercase text-primary mb-3" style="letter-spacing: 3px;">Service Management</h6>
@@ -42,6 +48,7 @@
                 <div class="form-group">
                     <label for="media" class="font-weight-bold">Image/Video (max 5):</label>
                     <input type="file" name="media[]" id="media" class="form-control-file" accept="image/*,video/*" multiple>
+                    <small class="form-text text-muted">Supported formats: Images (jpg, png, gif) and Videos (mp4, avi, mov, wmv, flv, webm, mkv)</small>
                 </div>
                 <div class="text-center">
                 <button type="submit" class="btn btn-primary font-weight-bold px-5 py-2" data-loading="Adding Service...">
