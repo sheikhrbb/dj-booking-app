@@ -18,7 +18,7 @@ WORKDIR /var/www/html
 COPY . /var/www/html
 
 # Copy .env file first (you must have this in your project root)
-RUN cp .env.example .env
+# RUN cp .env.example .env
 
 # Install dependencies
 RUN composer install --no-dev --optimize-autoloader
